@@ -1,0 +1,165 @@
+// Cristopher Castillo
+#include <iostream>
+#include <vector>
+#include <string>
+#include <algorithm>
+
+// Estructura para representar una tarea
+struct Tarea {
+    std::string titulo;
+    std::string descripcion;
+    bool completada;
+};
+
+// Función para agregar una nueva tarea al vector de tareas
+void agregarTarea(std::vector<Tarea> &tareas) {
+    Tarea nuevaTarea;
+    std::cout << "********************************\n";
+    std::cout << "Ingrese el título de la tarea: ";
+    std::cin.ignore(); // Ignorar el salto de línea residual en el buffer de entrada
+    std::getline(std::cin, nuevaTarea.titulo);
+    std::cout << "Ingrese la descripción de la tarea: ";
+    std::getline(std::cin, nuevaTarea.descripcion);
+    std::cout << "¿La tarea está completada? (1: Sí, 0: No): ";
+    std::cin >> nuevaTarea.completada;
+
+    tareas.push_back(nuevaTarea);
+    std::cout << ">>>>> Tarea agregada correctamente. <<<<<\n";
+}
+
+// Función para mostrar la lista de tareas
+void mostrarTareas(const std::vector<Tarea> &tareas) {
+    if (tareas.empty()) {
+        std::cout << ">>>> No hay tareas registradas. <<<<\n";
+    } else {
+        std::cout << "********************************\n";
+        std::cout << "Lista de tareas:\n";
+        for (const auto &tarea : tareas) {
+            std::cout << "Título: " << tarea.titulo << "\n";
+            std::cout << "Descripción: " << tarea.descripcion << "\n";
+            std::cout << "Estado: " << (tarea.completada ? "Completada" : "No completada") << "\n";
+            std::cout << "------------------------\n";
+        }
+    }
+}
+
+// Función para eliminar una tarea por título
+void eliminarTarea(std::vector<Tarea> &tareas, const std::string &titulo) {
+    auto it = std::remove_if(tareas.begin(), tareas.end(), [&titulo](const Tarea &t) {
+        return t.titulo == titulo;
+    });
+
+    if (it != tareas.end()) {
+        tareas.erase(it, tareas.end());
+        std::cout << ">>>> Tarea eliminada correctamente. <<<<\n";
+    } else {
+        std::cout << ">>>> No se encontró ninguna tarea con el título proporcionado. <<<<\n";
+    }
+}
+
+// Función para editar una tarea por título
+void editarTarea(std::vector<Tarea> &tareas, const std::string &titulo) {
+    auto it = std::find_if(tareas.begin(), tareas.end(), [&titulo](const Tarea &t) {
+        return t.titulo == titulo;
+    });
+
+    if (it != tareas.end()) {
+        std::cout << "********************************\n";
+        std::cout << "Tarea actual:\n";
+        std::cout << "Título: " << it->titulo << "\n";
+        std::cout << "Descripción: " << it->descripcion << "\n";
+        std::cout << "Estado: " << (it->completada ? "Completada" : "No completada") << "\n";
+        std::cout << "********************************\n";
+
+        std::cout << "Seleccione qué desea editar:\n";
+        std::cout << "1. Título y Descripción\n";
+        std::cout << "2. Estado de la Tarea\n";
+        std::cout << "3. Cancelar\n";
+        std::cout << "Ingrese su elección: ";
+
+        int opcion;
+        std::cin >> opcion;
+
+        switch (opcion) {
+            case 1:
+                std::cout << "Ingrese el nuevo título de la tarea: ";
+                std::cin.ignore(); // Ignorar el salto de línea residual en el buffer de entrada
+                std::getline(std::cin, it->titulo);
+                std::cout << "Ingrese la nueva descripción de la tarea: ";
+                std::getline(std::cin, it->descripcion);
+                std::cout << ">>>> Tarea editada correctamente. <<<<\n";
+                break;
+            case 2:
+                std::cout << "¿La tarea está completada? (1: Sí, 0: No): ";
+                std::cin >> it->completada;
+                std::cout << ">>>> Estado de la tarea editado correctamente. <<<<\n";
+                break;
+            case 3:
+                std::cout << ">>>> Edición cancelada. <<<<\n";
+                break;
+            default:
+                std::cout << ">>>> Opción no válida. <<<<\n";
+        }
+    } else {
+        std::cout << ">>>> No se encontró ninguna tarea con el título proporcionado. <<<<\n";
+    }
+}
+
+int main() {
+    std::vector<Tarea> tareas;
+    std::cout << "********************************\n";
+    std::cout << "* SISTEMA DE GESTIÓN DE TAREAS *\n";
+    while (true) {
+
+        std::cout << "********************************\n";
+        std::cout << "* 1. Agregar Tarea             *\n";
+        std::cout << "* 2. Mostrar Lista de Tareas   *\n";
+        std::cout << "* 3. Eliminar Tarea            *\n";
+        std::cout << "* 4. Editar Tarea              *\n";
+        std::cout << "* 5. Salir                     *\n";
+        std::cout << "********************************\n";
+        std::cout << "Seleccione una opción:";
+
+        int opcion;
+        std::cin >> opcion;
+
+        switch (opcion) {
+            case 1:
+                agregarTarea(tareas);
+                break;
+            case 2:
+                mostrarTareas(tareas);
+                break;
+            case 3: {
+                std::string titulo;
+                std::cout << "********************************\n";
+                std::cout << "Ingrese el título de la tarea a eliminar: ";
+                std::cin.ignore(); // Ignorar el salto de línea residual en el buffer de entrada
+                std::getline(std::cin, titulo);
+                eliminarTarea(tareas, titulo);
+                break;
+            }
+            case 4: {
+                std::string titulo;
+                std::cout << "********************************\n";
+                std::cout << "Ingrese el título de la tarea a editar: ";
+                std::cin.ignore(); // Ignorar el salto de línea residual en el buffer de entrada
+                std::getline(std::cin, titulo);
+                editarTarea(tareas, titulo);
+                break;
+            }
+            case 5:
+                std::cout << "********************************\n";
+                std::cout << "*    Tenga un Buen Dia.        *\n";
+                std::cout << "*         ADIOS.               *\n";
+                std::cout << "********************************\n";
+                return 0;
+            default:
+                std::cout << "********************************\n";
+                std::cout << "********************************\n";
+                std::cout << "Opción no válida. Intente de nuevo.\n";
+        }
+    }
+
+    return 0;
+}
